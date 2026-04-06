@@ -8,12 +8,15 @@ version = "0.3.0"
 description = "Python to Signum SmartC compiler - compile Python DSL smart contracts to Signum blockchain code"
 readme = "README.md"
 requires-python = ">=3.10"
-authors = [{name = "Holger", email = ""}]
+authors = [{name = "Holger"}]
 license = {text = "MIT"}
 dependencies = []
 
 [project.scripts]
 pytosmartc = "signum_compiler:main"
+
+[tool.setuptools]
+py-modules = ["signum_compiler"]
 
 [tool.pytest.ini_options]
 testpaths = ["test_smart_contracts.py"]
