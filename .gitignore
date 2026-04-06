@@ -28,3 +28,11 @@ Thumbs.db
 
 # External
 SmartC/smartc-web-ui/node_modules/
+
+# ccc
+.agent/
+.specify/
+
+# claude code
+.claude/
+CLAUDE.md
