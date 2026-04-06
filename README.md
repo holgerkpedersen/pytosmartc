@@ -31,7 +31,7 @@ Deploy to Signum blockchain:
 2. Go to ([Deleterium SmartC](https://github.com/deleterium/SmartC))
 3. Paste the code and click Compile
 4. Copy the AT assembly output
-5. Deploy using [Signum Wallet](https://wallet.signum.network/)
+5. Deploy using [Signum Network](https://signum.network/)
 
 ## Example Contracts
 
