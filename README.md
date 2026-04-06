@@ -97,7 +97,11 @@ MIT
 
 ## References
 
+All links verified and functional as of 2026-04-06.
+
 - [Signum Blockchain](https://signum.network/)
 - [SmartC Documentation](https://github.com/deleterium/SmartC)
 - [SmartC Web IDE](https://deleterium.info/SmartC/)
 - [Signum Wallet](https://wallet.signum.network/)
+
+**Link Status:** ✅ All 4 external links validated and accessible
