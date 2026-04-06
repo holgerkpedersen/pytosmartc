@@ -30,7 +30,7 @@ pytosmartc vault.py -o vault.smart.c
 Deploy to Signum blockchain:
 1. Compile your Python contract: `pytosmartc mycontract.py -o mycontract.smart.c`
 2. Compile SmartC to AT assembly using one of:
-   - **Build SmartC locally**: Clone [deleterium/smartc-web-ui](https://github.com/deleterium/smartc-web-ui), build, and use locally
+   - **Build SmartC locally**: Clone [deleterium/smartc-web-ui](https://smartc.signum-network.dev/), build, and use locally
    - **Use npm package**: `npm install -g smartc-signum-compiler` then `smartc mycontract.smart.c`
    - **Use SC-Simulator**: [deleterium/SC-Simulator](https://github.com/deleterium/SC-Simulator) for testing
 3. Copy the generated AT assembly code
@@ -87,7 +87,7 @@ To modify the compiler:
 1. Edit `signum_compiler.py`
 2. Test with: `pytest test_smart_contracts.py -v`
 3. Compile contracts: `python signum_compiler.py *.py`
-4. Verify SmartC output using [smartc-signum-compiler](https://www.npmjs.com/package/smartc-signum-compiler) or build [smartc-web-ui](https://github.com/deleterium/smartc-web-ui) locally
+4. Verify SmartC output using [smartc-signum-compiler](https://www.npmjs.com/package/smartc-signum-compiler) or build [smartc-web-ui](https://smartc.signum-network.dev/) locally
 
 ## Requirements
 
@@ -102,7 +102,7 @@ MIT
 
 - [Signum Blockchain](https://signum.network/)
 - [SmartC Compiler Documentation](https://github.com/deleterium/SmartC)
-- [SmartC Web UI (source)](https://github.com/deleterium/smartc-web-ui)
+- [SmartC Web UI (source)](https://smartc.signum-network.dev/)
 - [SmartC npm Package](https://www.npmjs.com/package/smartc-signum-compiler)
 - [SC-Simulator (debugger)](https://github.com/deleterium/SC-Simulator)
 - [Signum SmartC Testbed (automated testing)](https://github.com/ohager/signum-smartc-testbed)
