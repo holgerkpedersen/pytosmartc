@@ -30,7 +30,7 @@ pytosmartc vault.py -o vault.smart.c
 Deploy to Signum blockchain:
 1. Compile your Python contract: `pytosmartc mycontract.py -o mycontract.smart.c`
 2. Compile SmartC to AT assembly using one of:
-   - **Build SmartC locally**: Clone [deleterium/smartc-web-ui](https://smartc.signum-network.dev/), build, and use locally
+   - **Build SmartC locally**: Clone [smartc-web-ui](https://smartc.signum-network.dev/), build, and use locally
    - **Use npm package**: `npm install -g smartc-signum-compiler` then `smartc mycontract.smart.c`
    - **Use SC-Simulator**: [deleterium/SC-Simulator](https://github.com/deleterium/SC-Simulator) for testing
 3. Copy the generated AT assembly code
