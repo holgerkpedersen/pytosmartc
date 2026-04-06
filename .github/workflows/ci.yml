@@ -1,0 +1,21 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - run: pytest test_smart_contracts.py -v
+      - name: Compile all contracts
+        run: |
+          python signum_compiler.py vault.py -o vault.smart.c
+          python signum_compiler.py mytoken.py -o mytoken.smart.c
+          python signum_compiler.py lottery.py -o lottery.smart.c
+          python signum_compiler.py crowdfund.py -o crowdfund.smart.c
+          python signum_compiler.py multisig.py -o multisig.smart.c

@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Generated SmartC files (keep main examples, ignore test variants)
+vault_minimal.smart.c
+vault_renamed.smart.c
+vault_storage_approach.smart.c
+vault_test_param.smart.c
+test_minimal.smart.c
+test_vault_simple.smart.c
+token.smart.c
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# External
+SmartC/smartc-web-ui/node_modules/

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pytosmartc"
+version = "0.3.0"
+description = "Python to Signum SmartC compiler - compile Python DSL smart contracts to Signum blockchain code"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Holger", email = ""}]
+license = {text = "MIT"}
+dependencies = []
+
+[project.scripts]
+pytosmartc = "signum_compiler:main"
+
+[tool.pytest.ini_options]
+testpaths = ["test_smart_contracts.py"]
+python_files = ["test_*.py"]
