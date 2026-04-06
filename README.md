@@ -8,14 +8,15 @@ This compiler translates Python-like DSL contracts into SmartC C code, which the
 
 ## Installation
 
+Install from the repository:
 ```bash
+git clone https://github.com/holgerkpedersen/pytosmartc.git
+cd pytosmartc
 pip install -e .
 ```
 
-Or from source:
+Or with pip:
 ```bash
-git clone https://github.com/yourusername/pytosmartc.git
-cd pytosmartc
 pip install -e .
 ```
 
@@ -27,11 +28,13 @@ pytosmartc vault.py -o vault.smart.c
 ```
 
 Deploy to Signum blockchain:
-1. Copy the generated `.smart.c` file
-2. Go to [SmartC Web IDE](https://deleterium.info/SmartC/)
-3. Paste the code and click Compile
-4. Copy the AT assembly output
-5. Deploy using [Signum Wallet](https://wallet.signum.network/)
+1. Compile your Python contract: `pytosmartc mycontract.py -o mycontract.smart.c`
+2. Compile SmartC to AT assembly using one of:
+   - **Build SmartC locally**: Clone [deleterium/smartc-web-ui](https://github.com/deleterium/smartc-web-ui), build, and use locally
+   - **Use npm package**: `npm install -g smartc-signum-compiler` then `smartc mycontract.smart.c`
+   - **Use SC-Simulator**: [deleterium/SC-Simulator](https://github.com/deleterium/SC-Simulator) for testing
+3. Copy the generated AT assembly code
+4. Deploy using [Signum Wallet](https://github.com/signum-network/signum-xt-wallet) or [Phoenix Wallet](https://phoenix-wallet.rocks/)
 
 ## Example Contracts
 
@@ -84,7 +87,7 @@ To modify the compiler:
 1. Edit `signum_compiler.py`
 2. Test with: `pytest test_smart_contracts.py -v`
 3. Compile contracts: `python signum_compiler.py *.py`
-4. Verify SmartC output in [Web IDE](https://deleterium.info/SmartC/)
+4. Verify SmartC output using [smartc-signum-compiler](https://www.npmjs.com/package/smartc-signum-compiler) or build [smartc-web-ui](https://github.com/deleterium/smartc-web-ui) locally
 
 ## Requirements
 
@@ -97,11 +100,13 @@ MIT
 
 ## References
 
-All links verified and functional as of 2026-04-06.
-
 - [Signum Blockchain](https://signum.network/)
-- [SmartC Documentation](https://github.com/deleterium/SmartC)
-- [SmartC Web IDE](https://deleterium.info/SmartC/)
-- [Signum Wallet](https://wallet.signum.network/)
+- [SmartC Compiler Documentation](https://github.com/deleterium/SmartC)
+- [SmartC Web UI (source)](https://github.com/deleterium/smartc-web-ui)
+- [SmartC npm Package](https://www.npmjs.com/package/smartc-signum-compiler)
+- [SC-Simulator (debugger)](https://github.com/deleterium/SC-Simulator)
+- [Signum SmartC Testbed (automated testing)](https://github.com/ohager/signum-smartc-testbed)
+- [Signum Wallet - XT (browser extension)](https://github.com/signum-network/signum-xt-wallet)
+- [Phoenix Wallet (cross-platform)](https://phoenix-wallet.rocks/)
 
-**Link Status:** ✅ All 4 external links validated and accessible
+**Note:** SmartC Web IDE at deleterium.info is no longer available. Use npm package or build from source instead.
