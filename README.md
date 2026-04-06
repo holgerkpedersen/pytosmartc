@@ -28,7 +28,7 @@ pytosmartc vault.py -o vault.smart.c
 
 Deploy to Signum blockchain:
 1. Copy the generated `.smart.c` file
-2. Go to ([(https://deleterium.info/SmartC/)](https://github.com/deleterium/SmartC))
+2. Go to ([Deleterium SmartC](https://github.com/deleterium/SmartC))
 3. Paste the code and click Compile
 4. Copy the AT assembly output
 5. Deploy using [Signum Wallet](https://wallet.signum.network/)
