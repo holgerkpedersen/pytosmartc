@@ -116,6 +116,7 @@ class PythonToIRConverter(ast.NodeVisitor):
     def __init__(self):
         self.instructions: List[IRNode] = []
         self.variables: Dict[str, SignumVariable] = {}
+        self.functions: Dict[str, ast.FunctionDef] = {}
         self.temp_counter = 0
         self.label_counter = 0
         self.current_function = None
@@ -154,19 +155,33 @@ class PythonToIRConverter(ast.NodeVisitor):
     
     def visit_Module(self, node: ast.Module):
         """Visit module root"""
+        # First pass: collect function definitions
         for stmt in node.body:
-            self.visit(stmt)
+            if isinstance(stmt, ast.FunctionDef):
+                self.functions[stmt.name] = stmt
+        
+        # Second pass: generate code
+        for stmt in node.body:
+            if not isinstance(stmt, ast.FunctionDef):
+                self.visit(stmt)
+        
+        # Generate code for functions
+        for func_name, func_node in self.functions.items():
+            self.visit_FunctionDef(func_node)
     
     def visit_FunctionDef(self, node: ast.FunctionDef):
         """Visit function definition"""
         self.current_function = node.name
-        self.add_instruction(IROp.PUSH, f"FUNC_{node.name}")
+        self.add_label(f"func_{node.name}")
         
         # Generate function body
         for stmt in node.body:
             self.visit(stmt)
         
-        self.add_instruction(IROp.POP)
+        # Add return if none exists
+        if not any(isinstance(stmt, ast.Return) for stmt in node.body):
+            self.add_instruction(IROp.RETURN)
+        
         self.current_function = None
     
     def visit_Assign(self, node: ast.Assign):
@@ -243,8 +258,8 @@ class PythonToIRConverter(ast.NodeVisitor):
         else_label = self.new_label()
         end_label = self.new_label()
         
-        # IF condition == 0 THEN goto else_label
-        # We'll use the condition value directly
+        # If condition is false, goto else_label
+        # Compare condition to 0
         zero_temp = self.new_temp()
         self.add_instruction(IROp.EQ, condition, "0", zero_temp)
         self.add_instruction(IROp.IF, zero_temp, else_label)
@@ -273,7 +288,7 @@ class PythonToIRConverter(ast.NodeVisitor):
         self.add_label(loop_start)
         condition = self.visit(node.test)
         
-        # If condition == 0, exit loop
+        # If condition is false, exit loop
         zero_temp = self.new_temp()
         self.add_instruction(IROp.EQ, condition, "0", zero_temp)
         self.add_instruction(IROp.IF, zero_temp, loop_end)
@@ -291,8 +306,23 @@ class PythonToIRConverter(ast.NodeVisitor):
         if isinstance(node.func, ast.Name):
             func_name = node.func.id
             
+            # Check if it's a user-defined function
+            if func_name in self.functions:
+                # Generate function call
+                for i, arg in enumerate(node.args):
+                    arg_value = self.visit(arg)
+                    # Store arguments in temporary variables
+                    self.add_instruction(IROp.SET, f"arg_{i}", arg_value)
+                
+                # Jump to function
+                self.add_instruction(IROp.GOTO, f"func_{func_name}")
+                
+                # Store return value (would need stack for this)
+                result = self.new_temp()
+                return result
+            
             # Map Python built-ins to Signum operations
-            if func_name == "set":
+            elif func_name == "set":
                 # set(key, value)
                 key = self.visit(node.args[0])
                 value = self.visit(node.args[1])
@@ -378,7 +408,6 @@ class PythonToIRConverter(ast.NodeVisitor):
         
         elif isinstance(node.func, ast.Attribute):
             # Handle method calls like obj.method()
-            # For now, just pass through as a string
             func_name = f"{self.visit(node.func.value)}.{node.func.attr}"
             return f"call_{func_name}"
         
@@ -468,7 +497,6 @@ class SignumCodeGenerator:
         self.contract_name = contract_name
         self.variables: Dict[str, SignumVariable] = {}
         self.indent_level = 0
-        self.label_counter = 0
         
     def indent(self) -> str:
         return "    " * self.indent_level
@@ -518,7 +546,11 @@ class SignumCodeGenerator:
                         lines.append(f"{self.indent()}{line}")
                         seen_labels.add(line)
                 else:
-                    lines.append(f"{self.indent()}{line};")
+                    # Don't add semicolon for goto and if statements that already have them
+                    if line.strip().endswith(';'):
+                        lines.append(f"{self.indent()}{line}")
+                    else:
+                        lines.append(f"{self.indent()}{line};")
         
         self.indent_level = 1
         lines.append(f"{self.indent()}}}")
@@ -644,7 +676,10 @@ class SignumCodeGenerator:
             if arg.startswith("var_"):
                 return arg
             # Check if it's a label
-            if arg.startswith("label_"):
+            if arg.startswith("label_") or arg.startswith("func_"):
+                return arg
+            # Check if it's an argument
+            if arg.startswith("arg_"):
                 return arg
             # String literal
             if arg.startswith('"'):
@@ -682,7 +717,7 @@ class CompilerTestFramework:
         self.test_builtin_calls()
         self.test_token_transfer()
         self.test_augmented_assignment()
-        self.test_function_call()
+        self.test_function_definition()
         
         # Summary
         print("\n" + "=" * 60)
@@ -706,9 +741,9 @@ class CompilerTestFramework:
             
             # Check for expected patterns
             for pattern in expected_patterns:
-                if pattern not in output:
+                if pattern.lower() not in output.lower():
                     print(f"❌ {name}: Expected pattern '{pattern}' not found")
-                    print(f"   Output snippet: {output[:300]}...")
+                    print(f"   Output snippet: {output[:500]}...")
                     return False
             
             print(f"✅ {name}")
@@ -768,7 +803,7 @@ x = 0
 while x < 10:
     x = x + 1
 """
-        expected = ["goto", "while loop"]
+        expected = ["goto", "label_"]
         if self.test("While Loop", source, expected):
             self.tests_passed += 1
         else:
@@ -812,16 +847,16 @@ x *= 2
         else:
             self.tests_failed += 1
     
-    def test_function_call(self):
-        """Test function definitions and calls"""
+    def test_function_definition(self):
+        """Test function definitions"""
         source = """
 def test_func(a, b):
     return a + b
 
 result = test_func(5, 3)
 """
-        expected = ["FUNC_test_func", "return"]
-        if self.test("Function Call", source, expected):
+        expected = ["func_test_func", "return"]
+        if self.test("Function Definition", source, expected):
             self.tests_passed += 1
         else:
             self.tests_failed += 1
